@@ -1,11 +1,13 @@
 package com.sachin.locationapp
 
+
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -26,9 +28,19 @@ class MapsFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+
+
+        val clientName = arguments?.getString("name")
+        val clientLat = arguments?.getFloat("lat")
+        val clientLng = arguments?.getFloat("lng")
+
+        val location = LatLng(clientLat!!.toDouble(), clientLng!!.toDouble())
+
+
+        googleMap.addMarker(MarkerOptions().position(location).title(clientName))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+        googleMap.setMinZoomPreference(10f)
+
     }
 
     override fun onCreateView(
@@ -41,6 +53,11 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as AppCompatActivity).supportActionBar?.title = "Locate " +
+                arguments?.getString("name")!!.split(" ")[0]
+
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
